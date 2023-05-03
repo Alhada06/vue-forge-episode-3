@@ -70,15 +70,17 @@ const messagesForAPI = computed(() =>
 //     });
 //   }, 3000);
 // }
+const { chat } = useChatAi({ agent: "customerSupport" });
 async function handleNewMessage(message: Message) {
   messages.value.push(message);
   usersTyping.value.push(bot.value);
-  const res = await $fetch("/api/ai", {
-    method: "POST",
-    body: {
-      messages: messagesForAPI.value,
-    },
-  });
+  // const res = await $fetch("/api/ai", {
+  //   method: "POST",
+  //   body: {
+  //     messages: messagesForAPI.value,
+  //   },
+  // });
+  const res = await chat({ messages: messagesForAPI.value });
   if (!res.choices[0].message?.content) return;
   const msg = {
     id: res.id,
