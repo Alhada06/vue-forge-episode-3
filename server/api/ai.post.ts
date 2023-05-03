@@ -1,18 +1,19 @@
 // import { Configuration, OpenAIApi } from "openai";
 
-const storage = useStorage();
+// const storage = useStorage();
 
 export default defineEventHandler(async (event) => {
-  // const body = await readBody(event);
-  const { message, temperature } = await readBody(event);
-  const session = await useSession(event, {
-    password: "dfghjkokhfddtu-kgsaiqowbhans-kkshnnajskkask-hans-kkshnnajskkask",
-  });
-
+  const body = await readBody(event);
+  // version with the persistance with frontside and server-side
+  // const { message, temperature } = await readBody(event);
+  // const session = await useSession(event, {
+  //   password: "dfghjkokhfddtu-kgsaiqowbhans-kkshnnajskkask-hans-kkshnnajskkask",
+  // });
+  // const key = session.id + ":messages";
+  //   const messages = ((await storage.getItem(key)) as Array<any>) || [];
+  //   messages.push({ role: "user", content: message });
   // const messages = session.data.messages ||[];
-  const key = session.id + ":messages";
-  const messages = ((await storage.getItem(key)) as Array<any>) || [];
-  messages.push({ role: "user", content: message });
+
   const completion = await $openai.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
@@ -78,16 +79,17 @@ export default defineEventHandler(async (event) => {
           "{insert post text here}. \n [Share on Twitter] (https://twitter.com/intent/tweet?text={insert post text here})",
       },
 
-      ...messages,
+      ...body.messages,
     ],
-    temperature: temperature || 1,
+    temperature: body.temperature || 1,
   });
-  const response = completion.data;
-  messages.push({
-    role: "assistant",
-    content: response.choices[0].message?.content,
-  });
-  // await session.update({messages})
-  await storage.setItem(key, messages);
-  return response;
+  // presisted server storage
+  // const response = completion.data;
+  // messages.push({
+  //   role: "assistant",
+  //   content: response.choices[0].message?.content,
+  // });
+  // // await session.update({messages})
+  // await storage.setItem(key, messages);
+  return completion.data;
 });

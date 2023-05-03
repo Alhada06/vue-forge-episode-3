@@ -76,7 +76,7 @@ async function handleNewMessage(message: Message) {
   const res = await $fetch("/api/ai", {
     method: "POST",
     body: {
-      message: message.text,
+      messages: messagesForAPI.value,
     },
   });
   if (!res.choices[0].message?.content) return;
