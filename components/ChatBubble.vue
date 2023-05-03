@@ -1,0 +1,52 @@
+<script setup lang="ts">
+// @ts-expect-error I couldn't find any types for vue 3 markdownit
+import Markdown from "vue3-markdown-it";
+import type { Message, User } from "@/types";
+defineProps<{
+  message?: Message;
+  user?: User;
+  myMessage?: boolean;
+}>();
+</script>
+<template>
+  <div
+    class="chat"
+    :class="{
+      'chat-end': myMessage,
+      'chat-start': !myMessage,
+    }"
+  >
+    <div class="chat-image avatar">
+      <div class="w-10 rounded-full">
+        <img :src="user?.avatar" />
+      </div>
+    </div>
+    <div class="chat-header mb-2">
+      <strong>{{ user?.name }}</strong>
+      &nbsp;
+      <time v-if="message" class="text-xs opacity-50">{{
+        useTimeAgo(message?.createdAt).value
+      }}</time>
+    </div>
+    <div
+      class="chat-bubble py-0 prose prose-sm bg-base-100 max-w-max w-full"
+      :class="{
+        'bg-neutral-focus text-white': myMessage,
+      }"
+    >
+      <slot>
+        <Markdown :source="message?.text" class="w-full" />
+      </slot>
+    </div>
+    <!-- <div class="chat-footer opacity-50">Delivered</div> -->
+  </div>
+</template>
+<style scoped>
+:deep(code) {
+  background: none;
+  @apply overflow-x-auto w-full;
+}
+:deep(pre) {
+  @apply dark:bg-[rgba(0,0,0,.3)] overflow-x-auto w-full;
+}
+</style>
