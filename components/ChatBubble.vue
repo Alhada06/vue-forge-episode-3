@@ -29,6 +29,7 @@ defineProps<{
       }}</time>
     </div>
     <div
+      data-test="chat-bubble-text"
       class="chat-bubble py-0 prose prose-sm bg-base-100 max-w-max w-full"
       :class="{
         'bg-neutral-focus text-white': myMessage,
